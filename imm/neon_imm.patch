@@ -1,0 +1,57 @@
+diff --git a/imm/torch_utils/misc.py b/imm/torch_utils/misc.py
+index d5dab33..37c008f 100644
+--- a/imm/torch_utils/misc.py
++++ b/imm/torch_utils/misc.py
+@@ -170,7 +170,7 @@ class InfiniteSampler(torch.utils.data.Sampler):
+         assert num_replicas > 0
+         assert 0 <= rank < num_replicas
+         assert 0 <= window_size <= 1
+-        super().__init__(dataset)
++        super().__init__()
+         self.dataset = dataset
+         self.rank = rank
+         self.num_replicas = num_replicas
+diff --git a/imm/training/training_loop.py b/imm/training/training_loop.py
+index 9549896..6091378 100644
+--- a/imm/training/training_loop.py
++++ b/imm/training/training_loop.py
+@@ -12,7 +12,10 @@ import dnnlib
+ from torch_utils import distributed as dist
+ from torch_utils import training_stats
+ from torch_utils import misc
+-from metrics import metric_main
++try:
++    from metrics import metric_main
++except ImportError:
++    metric_main = None  # metrics not used when config.training.metrics == []
+ from einops import rearrange
+ from omegaconf import DictConfig, OmegaConf, ListConfig
+ from tqdm import tqdm
+@@ -251,7 +254,7 @@ def training_loop(
+ 
+     if resume_state_dump:
+         dist.print0(f'Loading training state from "{resume_state_dump}"...')
+-        data = torch.load(resume_state_dump, map_location=torch.device("cpu"))
++        data = torch.load(resume_state_dump, map_location=torch.device("cpu"), weights_only=False)
+         misc.copy_params_and_buffers(
+             src_module=data["net"], dst_module=net, require_all=True
+         )
+@@ -526,7 +529,7 @@ def training_loop(
+ 
+             if dist.get_rank() == 0:
+                 try:
+-                    if config.training.use_zero:
++                    if config.training.get("use_zero", False):
+                         optimizer.consolidate_state_dict()
+                     torch.save(
+                         dict(net=net, optimizer_state=optimizer.state_dict(),
+@@ -574,8 +577,7 @@ def training_loop(
+                     os.makedirs(samples_dir)
+ 
+                 for strategy_name, samples_latent in res.items():
+-                    # Decode the latent samples to image space using the network's decoder
+-                    decoded_images = net.decoder.decode(samples_latent)
++                    decoded_images = encoder.decode(samples_latent)
+ 
+                     # Construct the filename with tick number and sampling strategy
+                     fname = os.path.join(samples_dir, f"tick-{cur_tick:06d}.png")

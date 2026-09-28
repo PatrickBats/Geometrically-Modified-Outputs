@@ -1,0 +1,21 @@
+# Install a CUDA build of torch/torchvision first (https://pytorch.org), then: pip install -r requirements.txt
+torch>=2.1
+torchvision
+numpy
+scipy
+tqdm
+Pillow
+lmdb
+diffusers
+torch-fidelity
+timm==1.0.8
+huggingface_hub
+einops
+omegaconf
+hydra-core
+beartype
+loguru
+fvcore
+av
+wandb
+matplotlib
