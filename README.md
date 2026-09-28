@@ -1,8 +1,6 @@
 # Improving Generative Model Self-training with Geometrically Modified Outputs
 
-AUTHORS (AFFILIATION)
-
-VENUE. [[paper]](paper/Improving_Generative_Model_Self-training_with_Geometrically_Modified_Outputs.pdf)
+Code for the paper. Paper link and citation coming soon.
 
 ## Summary
 
@@ -59,14 +57,3 @@ python generate_gmo_grid.py --checkpoint-key imm --download-missing --alpha 0.5
 ```
 
 Code builds on [IMM](https://github.com/lumaai/imm), [MeanFlow](https://github.com/zhuyu-cs/MeanFlow), [AlphaFlow](https://github.com/snap-research/alphaflow), and [Neon](https://github.com/VITA-Group/Neon).
-
-## Citation
-
-```bibtex
-@inproceedings{KEY,
-  title     = {Improving Generative Model Self-training with Geometrically Modified Outputs},
-  author    = {AUTHORS},
-  booktitle = {VENUE},
-  year      = {YEAR}
-}
-```
