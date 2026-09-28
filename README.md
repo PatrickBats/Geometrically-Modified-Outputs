@@ -16,7 +16,7 @@ Experiments cover IMM, MeanFlow, and AlphaFlow.
 ## Contents
 
 - `gmo/` the GMO correction, shared by all models
-- `imm/` GMO generation, finetuning, Neon merge, and FID for IMM
+- `imm/` GMO generation, finetuning, Neon merge, SIMS-style guidance, and FID for IMM
 - `meanflow/` GMO generation and FID for MeanFlow
 - `alphaflow/` GMO generation, finetuning, and FID (with Neon merge) for AlphaFlow
 - `checkpoints/`, `fid_stats/` download scripts for checkpoints and ImageNet 256 reference statistics
@@ -42,6 +42,7 @@ python imm/lmdb_to_png.py spectral_data_imm/combined_alpha_0.5 data/imm_alpha_0.
 bash imm/finetune.sh data/imm_alpha_0.5 runs/imm_alpha_0.5
 python imm/merge.py --base checkpoints/imagenet256_ts_a2.pkl --aux runs/imm_alpha_0.5/<run>/network-snapshot-000060.pkl --w 0.8 --out merged.pkl
 torchrun --nproc_per_node=8 imm/eval.py --checkpoint-path merged.pkl --cfg-scale 1.3
+bash imm/run_sims.sh runs/imm_alpha_0.1/<run>/network-snapshot-000016.pkl 1.0 results/sims_fid.txt
 
 python meanflow/generate_gmo.py --checkpoint checkpoints/meanflow_sit_b_2.pt --model SiT-B/2 --output-dir spectral_data_meanflow
 torchrun --nproc_per_node=8 meanflow/eval.py --checkpoint-key sit_b_2 --download-missing
@@ -56,4 +57,4 @@ torchrun --nproc_per_node=8 imm/eval.py --checkpoint-key imm --download-missing
 python generate_gmo_grid.py --checkpoint-key imm --download-missing --alpha 0.5
 ```
 
-Code builds on [IMM](https://github.com/lumaai/imm), [MeanFlow](https://github.com/zhuyu-cs/MeanFlow), [AlphaFlow](https://github.com/snap-research/alphaflow), and [Neon](https://github.com/VITA-Group/Neon).
+Code builds on [SIMS](https://arxiv.org/abs/2408.16333), [IMM](https://github.com/lumaai/imm), [MeanFlow](https://github.com/zhuyu-cs/MeanFlow), [AlphaFlow](https://github.com/snap-research/alphaflow), and [Neon](https://github.com/VITA-Group/Neon).
